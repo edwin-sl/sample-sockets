@@ -84,11 +84,12 @@ namespace SampleSockets.Network.Server
 			while (client.Connected)
 				try
 				{
+					Array.Clear(bytes, 0, bytes.Length);
 					var stream = client.GetStream();
 					var length = stream.Read(bytes, 0, bytes.Length);
 
 					// Translate data bytes to a ASCII string.
-					ReceivePackage((ServerCommands) bytes[0], bytes.Skip(1).Take(length).ToArray());
+					ReceivePackage((ServerCommands) bytes[0], bytes.Skip(1).Take(length - 1).ToArray());
 					stream.Flush();
 				}
 				catch (Exception e)

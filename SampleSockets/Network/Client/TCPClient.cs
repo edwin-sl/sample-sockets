@@ -60,6 +60,7 @@ namespace SampleSockets.Network.Client
 			while (tcpClient.Connected)
 				try
 				{
+					Array.Clear(bytes, 0, bytes.Length);
 					var stream = tcpClient.GetStream();
 					var length = stream.Read(bytes, 0, bytes.Length);
 
