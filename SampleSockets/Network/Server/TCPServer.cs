@@ -10,7 +10,7 @@ using SampleSockets.Network.Utils;
 
 namespace SampleSockets.Network.Server
 {
-	internal class TCPServer : CommBase
+	class TCPServer : CommBase
 	{
 		private List<TcpClient> clients;
 		private TcpClient tcpClient;
@@ -43,31 +43,35 @@ namespace SampleSockets.Network.Server
 			});
 		}
 
-		public void SendPackage(ServerCommands command, byte[] data)
+		public void SendPackage(CommandPackage package)
 		{
-			var bytes = new List<byte>(data);
-			bytes.Insert(0, (byte) command);
+			var bytes = new List<byte>(package.data);
+			bytes.Insert(0, (byte) package.command);
 
 			clients.RemoveAll(client => !client.Connected);
 			NetworkStream stream;
 			clients.ForEach(client =>
 			{
-				stream = client.GetStream();
-				stream.Write(bytes.ToArray(), 0, bytes.Count);
-				stream.Flush();
-				stream = null;
+				if (client.Client.RemoteEndPoint != package.client)
+				{
+					stream = client.GetStream();
+					stream.Write(bytes.ToArray(), 0, bytes.Count);
+					stream.Flush();
+					stream = null;
+				}
 			});
 		}
 
-		public void ReceivePackage(ServerCommands command, byte[] data)
+		public void ReceivePackage(CommandPackage package)
 		{
-			switch (command)
+			switch (package.command)
 			{
 				case ServerCommands.BROADCAST:
 					break;
 				case ServerCommands.MESSAGE:
-					PrintUtils.PrintNormal(Encoding.ASCII.GetString(data, 0, data.Length));
-					SendPackage(ServerCommands.BROADCAST, data);
+					PrintUtils.PrintNormal(Encoding.ASCII.GetString(package.data, 0, package.data.Length));
+					package.command = ServerCommands.BROADCAST;
+					SendPackage(package);
 					break;
 			}
 		}
@@ -88,8 +92,12 @@ namespace SampleSockets.Network.Server
 					var stream = client.GetStream();
 					var length = stream.Read(bytes, 0, bytes.Length);
 
+					CommandPackage package = new CommandPackage(
+						(ServerCommands)bytes[0],
+						bytes.Skip(1).Take(length).ToArray(),
+						tcpClient.Client.RemoteEndPoint);
 					// Translate data bytes to a ASCII string.
-					ReceivePackage((ServerCommands) bytes[0], bytes.Skip(1).Take(length - 1).ToArray());
+					ReceivePackage(package);
 					stream.Flush();
 				}
 				catch (Exception e)

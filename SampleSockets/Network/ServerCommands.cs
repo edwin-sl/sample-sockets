@@ -1,4 +1,6 @@
-﻿namespace SampleSockets.Network
+﻿using System.Net;
+
+namespace SampleSockets.Network
 {
 	public enum ServerCommands
 	{
@@ -6,5 +8,19 @@
 		MESSAGE,
 		BROADCAST,
 		RESTART
+	}
+
+	public class CommandPackage
+	{
+		public ServerCommands command { get; set; }
+		public byte[] data { get; set; }
+		public EndPoint client { get; set; }
+
+		public CommandPackage(ServerCommands command, byte[] data, EndPoint client)
+		{
+			this.command = command;
+			this.data = data;
+			this.client = client;
+		}
 	}
 }

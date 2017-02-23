@@ -26,10 +26,10 @@ namespace SampleSockets.Network.Client
 			var task = Task.Run(() => ReceivingData());
 		}
 
-		public void SendPackage(ServerCommands command, byte[] data)
+		public void SendPackage(CommandPackage package)
 		{
-			var bytes = new List<byte>(data);
-			bytes.Insert(0, (byte) command);
+			var bytes = new List<byte>(package.data);
+			bytes.Insert(0, (byte) package.command);
 
 			var stream = tcpClient.GetStream();
 			stream.Write(bytes.ToArray(), 0, bytes.Count);
@@ -37,15 +37,15 @@ namespace SampleSockets.Network.Client
 			stream = null;
 		}
 
-		public void ReceivePackage(ServerCommands command, byte[] data)
+		public void ReceivePackage(CommandPackage package)
 		{
-			switch (command)
+			switch (package.command)
 			{
 				case ServerCommands.BROADCAST:
-					PrintUtils.PrintNormal(Encoding.ASCII.GetString(data, 0, data.Length));
+					PrintUtils.PrintNormal(Encoding.ASCII.GetString(package.data, 0, package.data.Length));
 					break;
 				case ServerCommands.MESSAGE:
-					PrintUtils.PrintNormal(Encoding.ASCII.GetString(data, 0, data.Length));
+					PrintUtils.PrintNormal(Encoding.ASCII.GetString(package.data, 0, package.data.Length));
 					break;
 			}
 		}
@@ -63,10 +63,13 @@ namespace SampleSockets.Network.Client
 					Array.Clear(bytes, 0, bytes.Length);
 					var stream = tcpClient.GetStream();
 					var length = stream.Read(bytes, 0, bytes.Length);
-
-					//					{
+					
+					CommandPackage package = new CommandPackage(
+						(ServerCommands)bytes[0], 
+						bytes.Skip(1).Take(length).ToArray(), 
+						tcpClient.Client.RemoteEndPoint);
 					// Translate data bytes to a ASCII string.
-					ReceivePackage((ServerCommands) bytes[0], bytes.Skip(1).Take(length).ToArray());
+					ReceivePackage(package);
 					stream.Flush();
 				}
 				catch (Exception e)

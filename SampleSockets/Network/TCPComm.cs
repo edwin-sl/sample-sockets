@@ -29,12 +29,12 @@ namespace SampleSockets.Network
 			PrintUtils.PrintImportant(" - - - - - - - - - - - - - - - - - - - - - - - - - ");
 		}
 
-		public void SendPackage(ServerCommands command, byte[] data)
+		public void SendPackage(CommandPackage package)
 		{
-			tcpBase.SendPackage(command, data);
+			tcpBase.SendPackage(package);
 		}
 
-		public void ReceivePackage(ServerCommands command, byte[] data)
+		public void ReceivePackage(CommandPackage package)
 		{
 			throw new NotImplementedException();
 		}

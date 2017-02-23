@@ -19,7 +19,7 @@ namespace SampleSockets
 			while (true)
 			{
 				var msg = Console.ReadLine();
-				chat.SendPackage(ServerCommands.MESSAGE, Encoding.ASCII.GetBytes(msg));
+				chat.SendPackage(new CommandPackage(ServerCommands.MESSAGE, Encoding.ASCII.GetBytes(msg), null));
 			}
 		}
 	}
