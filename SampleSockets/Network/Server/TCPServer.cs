@@ -104,11 +104,6 @@ namespace SampleSockets.Network.Server
 				}
 				catch (Exception e)
 				{
-//					Console.BackgroundColor = ConsoleColor.Red;
-//					Console.ForegroundColor = ConsoleColor.White;
-//					Console.WriteLine(e.ToString());
-//					Console.ResetColor();
-
 					PrintUtils.PrintImportant(string.Format("Client Disconnected ({0})", client.Client.RemoteEndPoint));
 				}
 		}

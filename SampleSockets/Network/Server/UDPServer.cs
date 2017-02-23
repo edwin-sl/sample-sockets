@@ -2,6 +2,7 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
+using SampleSockets.Network.Utils;
 
 namespace SampleSockets.Network.Server
 {
@@ -63,10 +64,7 @@ namespace SampleSockets.Network.Server
 			}
 			catch (Exception e)
 			{
-				Console.BackgroundColor = ConsoleColor.Red;
-				Console.ForegroundColor = ConsoleColor.White;
-				Console.WriteLine(e);
-				Console.ResetColor();
+				PrintUtils.PrintError(e.ToString());
 				serverEndPoint = null;
 			}
 			udpClient.Close();

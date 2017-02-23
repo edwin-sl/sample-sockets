@@ -3,7 +3,7 @@
 	internal class NetworkNode
 	{
 		protected string name = "node";
-		protected int portTCP = 248;
-		protected int portUDP = 247;
+		public const int portTCP = 248;
+		public const int portUDP = 247;
 	}
 }
