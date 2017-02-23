@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 
 namespace SampleSockets.Network
 {
@@ -10,7 +11,7 @@ namespace SampleSockets.Network
 		RESTART
 	}
 
-	public class CommandPackage
+	public class CommandPackage : EventArgs
 	{
 		public ServerCommands command { get; set; }
 		public byte[] data { get; set; }

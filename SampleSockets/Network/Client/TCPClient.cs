@@ -12,6 +12,7 @@ namespace SampleSockets.Network.Client
 {
 	internal class TCPClient : CommBase
 	{
+		public event EventHandler ReceivedPackage;
 		private readonly TcpClient tcpClient;
 
 		public TCPClient(IPAddress server, int port)
@@ -42,10 +43,12 @@ namespace SampleSockets.Network.Client
 			switch (package.command)
 			{
 				case ServerCommands.BROADCAST:
-					PrintUtils.PrintNormal(Encoding.ASCII.GetString(package.data, 0, package.data.Length));
+					ReceivedPackage?.Invoke(this, package);
+//					PrintUtils.PrintNormal(Encoding.ASCII.GetString(package.data, 0, package.data.Length));
 					break;
 				case ServerCommands.MESSAGE:
-					PrintUtils.PrintNormal(Encoding.ASCII.GetString(package.data, 0, package.data.Length));
+					ReceivedPackage?.Invoke(this, package);
+//					PrintUtils.PrintNormal(Encoding.ASCII.GetString(package.data, 0, package.data.Length));
 					break;
 			}
 		}

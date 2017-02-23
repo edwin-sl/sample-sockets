@@ -10,6 +10,8 @@ namespace SampleSockets.Network
 {
 	internal class TCPComm : NetworkNode, CommBase
 	{
+		public event EventHandler ReceivedPackage;
+
 		private readonly CommBase tcpBase;
 		private TcpClient tcpClient;
 		private TcpListener tcpListener;
@@ -20,6 +22,8 @@ namespace SampleSockets.Network
 				tcpBase = new TCPServer(portTCP);
 			else
 				tcpBase = new TCPClient(server, portTCP);
+
+			tcpBase.ReceivedPackage += (sender, args) => ReceivePackage((CommandPackage)args);
 		}
 
 		public void Start()
@@ -36,7 +40,9 @@ namespace SampleSockets.Network
 
 		public void ReceivePackage(CommandPackage package)
 		{
-			throw new NotImplementedException();
+			ReceivedPackage?.Invoke(this, package);
 		}
+
+		
 	}
 }

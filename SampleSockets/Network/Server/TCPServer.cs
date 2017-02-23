@@ -12,6 +12,7 @@ namespace SampleSockets.Network.Server
 {
 	class TCPServer : CommBase
 	{
+		public event EventHandler ReceivedPackage;
 		private List<TcpClient> clients;
 		private TcpClient tcpClient;
 		private readonly TcpListener tcpListener;
@@ -69,7 +70,8 @@ namespace SampleSockets.Network.Server
 				case ServerCommands.BROADCAST:
 					break;
 				case ServerCommands.MESSAGE:
-					PrintUtils.PrintNormal(Encoding.ASCII.GetString(package.data, 0, package.data.Length));
+					ReceivedPackage?.Invoke(this, package);
+//					PrintUtils.PrintNormal(Encoding.ASCII.GetString(package.data, 0, package.data.Length));
 					package.command = ServerCommands.BROADCAST;
 					SendPackage(package);
 					break;
@@ -95,7 +97,7 @@ namespace SampleSockets.Network.Server
 					CommandPackage package = new CommandPackage(
 						(ServerCommands)bytes[0],
 						bytes.Skip(1).Take(length).ToArray(),
-						tcpClient.Client.RemoteEndPoint);
+						client.Client.RemoteEndPoint);
 					// Translate data bytes to a ASCII string.
 					ReceivePackage(package);
 					stream.Flush();

@@ -16,11 +16,18 @@ namespace SampleSockets
 
 			chat.Start();
 
+			chat.ReceivedPackage += ReceivedPackage;
 			while (true)
 			{
 				var msg = Console.ReadLine();
 				chat.SendPackage(new CommandPackage(ServerCommands.MESSAGE, Encoding.ASCII.GetBytes(msg), null));
 			}
+		}
+
+		private static void ReceivedPackage(object sender, EventArgs e)
+		{
+			CommandPackage package = (CommandPackage) e;
+			Console.WriteLine(Encoding.ASCII.GetString(package.data));
 		}
 	}
 }
